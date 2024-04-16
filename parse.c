@@ -1,45 +1,145 @@
 #include "parse.h"
 
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "ops.h"
+int parse_tokenize(char* input, struct Token* tokens) {
+    int i = 0, j = 0; // i: input index, j: token list index
 
-int parse(char* input, int* nums, int* op) {
-    // TODO: There surely is a faster way (use regular expressions, maybe?)
-    int num_index = 0;
-
-    for (int i = 0; input[i] != '\n'; i++) {
+    // TODO: wouldn't it be more elegant to use the END token as a stop condition?
+    for (; i < strlen(input); i++) {
         switch (input[i]) {
-            case 48 ... 57:
-                nums[num_index] *= 10;
-                nums[num_index] += input[i] - 48; 
+            case '0' ... '9':
+                tokens[j].type = NUM;
+                for (; input[i] <= '9' && input[i] >= '0'; i++) {
+                    tokens[j].value *= 10;
+                    tokens[j].value += input[i] - '0';
+                    // TODO: decimal point and negative number support
+                }
+                i--;
                 break;
-            case 43:
-                *op = ADD;
-                num_index++;
+            
+            case '=':
+                tokens[j].type = SET;
                 break;
-            case 45:
-                *op = SUB;
-                num_index++;
+          
+            case '(':
+                tokens[j].type = LPR;
                 break;
-            case 42:
-                *op = MUL;
-                num_index++;
+
+            case ')':
+                tokens[j].type = RPR;
                 break;
-            case 47:
-                *op = DIV;
-                num_index++;
+
+            case '+':
+                tokens[j].type = OPS;
+                tokens[j].op_type = ADD;
                 break;
-            case 94:
-                *op = POW;
-                num_index++;
+            
+            case '-':
+                tokens[j].type = OPS;
+                tokens[j].op_type = SUB;
                 break;
+            
+            case '*':
+                tokens[j].type = OPS;
+                tokens[j].op_type = MUL;
+                break;
+            
+            case '/':
+                tokens[j].type = OPS;
+                tokens[j].op_type = DIV;
+                break;
+            
+            case '^':
+                tokens[j].type = OPS;
+                tokens[j].op_type = POW;
+                break;
+            
+            case 'A' ... 'Z':
+            case 'a' ... 'z':
+                tokens[j].type = VAR;
+                tokens[j].value = input[i];
+                // TODO: make variables work
+                break;
+           
+            case '\n':
+                tokens[j].type = END;
+                break;
+
             default:
-                fprintf(stderr, "Syntax error: illegal character '%d'\n", input[i]);
-                return -1;
+                fprintf(stderr, "Error: unknown token %c\n", input[i]);
+                return 1;
+        }
+        
+        j++;
+    }
+    
+    return 0;
+}
+
+int parse_shunting_yard(struct Token* tokens, int len) {
+    // i: top of token stack, j: top of output stack, k: top of the operator stack
+    // -1 indicates an empty stack
+    int i = -1, j = -1, k = -1;
+    struct Token op_stack[len];
+
+    for (; tokens[i].type != END; ++i) {
+        switch (tokens[i].type) {
+            case NUM:
+            case VAR:
+                j++;
+                tokens[j] = tokens[i];
+                break;
+            
+            case SET:
+                // TODO
+                break;
+
+            case LPR:
+                k++;
+                op_stack[k] = tokens[i];
+                break;
+
+            case RPR:
+                while (op_stack[k].type != LPR) {
+                    if (k == -1) {
+                        fprintf(stderr, "Error: Mismatched parentheses\n");
+                        return 1;
+                    }
+                    j++;
+                    tokens[j] = op_stack[k];
+                    k--;
+                }
+                k--; // discard opening parentheses
+                break;
+
+            case OPS:
+                while (k > -1 && 
+                        op_stack[k].type == OPS && 
+                        op_stack[k].op_type < tokens[i].op_type) {
+                    j++;
+                    tokens[j] = op_stack[k];
+                    k--;
+                }
+                k++;
+                op_stack[k] = tokens[i];
+                break;
+
+            case END:
+                break;
         }
     }
 
+    for (; k > -1; k--) {
+        if (op_stack[k].type == LPR) {
+            fprintf(stderr, "Error: Mismatched parentheses (part 2)\n");
+            return 1;
+        }
+        j++;
+        tokens[j] = op_stack[k];
+    }
+    tokens[j++].type = END;
     return 0;
-} 
+}

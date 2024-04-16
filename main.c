@@ -3,8 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "calc.h"
-#include "ops.h"
 #include "parse.h"
 
 int main(int argc, char* argv[]) {
@@ -17,9 +15,17 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    // recurive parsing and calculation
-    int res = calc_recursive(input);
+    // input parsing
+    int len = strlen(input);
+    struct Token tokens[len];
 
-    // output
-    printf("%d\n", res);
+    if (parse_tokenize(input, tokens)) {
+        fprintf(stderr, "Error parsing tokens\n");
+        return 1;
+    }
+
+    if (parse_shunting_yard(tokens, len)) {
+        fprintf(stderr, "Error converting to RPN\n");
+        return 1;
+    }
 }

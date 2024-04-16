@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
+#include "tree.h"
 #include "parse.h"
+#include "tree_parse.h"
+#include "test.h"
 
 int main(int argc, char* argv[]) {
     // getting the input
@@ -12,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     if (getline(&input, &size, stdin) == -1) {
         fprintf(stderr, "Error getting input\n");
-        return -1;
+        return 1;
     }
 
     // input parsing
@@ -24,8 +26,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (parse_shunting_yard(tokens, len)) {
-        fprintf(stderr, "Error converting to RPN\n");
+    free(input);
+
+    struct Node top_node;
+
+    if (tree_parse_shunting_yard(tokens, len, &top_node)) {
+        fprintf(stderr, "Error converting to tree\n");
         return 1;
     }
+
+    // debug
+    printf("%d\n", top_node.token->type);
+    test_print_tree(&top_node);
 }

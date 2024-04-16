@@ -134,7 +134,7 @@ int parse_shunting_yard(struct Token* tokens, int len) {
 
     for (; k > -1; k--) {
         if (op_stack[k].type == LPR) {
-            fprintf(stderr, "Error: Mismatched parentheses (part 2)\n");
+            fprintf(stderr, "Error: Mismatched parentheses\n");
             return 1;
         }
         j++;

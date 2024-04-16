@@ -5,6 +5,6 @@
 
 int parse_tokenize(char* input, struct Token* tokens);
 
-int parse_shunting_yard(struct Token* tokens, int len);
+int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_token);
 
 #endif

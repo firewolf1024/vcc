@@ -1,3 +1,3 @@
-calc: main.c parse.c tree_parse.c test.c
+calc: main.c parse.c test.c
 	clear
-	gcc -o calc main.c parse.c tree_parse.c test.c -Wall -g
+	gcc -o calc main.c parse.c test.c -Wall -g

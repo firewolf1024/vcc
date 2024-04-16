@@ -4,7 +4,6 @@
 
 #include "token.h"
 #include "parse.h"
-#include "tree_parse.h"
 #include "test.h"
 
 int main(int argc, char* argv[]) {
@@ -30,7 +29,7 @@ int main(int argc, char* argv[]) {
 
     struct Token* p_top; // will point to the top of the tree once it's assembled
 
-    if (tree_parse_shunting_yard(tokens, len, &p_top)) {
+    if (parse_shunting_yard(tokens, len, &p_top)) {
         fprintf(stderr, "Error converting to tree\n");
         return 1;
     }

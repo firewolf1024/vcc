@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "tree.h"
+#include "token.h"
 #include "parse.h"
 #include "tree_parse.h"
 #include "test.h"
@@ -28,14 +28,17 @@ int main(int argc, char* argv[]) {
 
     free(input);
 
-    struct Node top_node;
+    struct Token* p_top; // will point to the top of the tree once it's assembled
 
-    if (tree_parse_shunting_yard(tokens, len, &top_node)) {
+    if (tree_parse_shunting_yard(tokens, len, &p_top)) {
         fprintf(stderr, "Error converting to tree\n");
         return 1;
     }
 
+    // tokens is still the same pile of wood, only that the wood has now been labelled to indicate how it would fit together as a tree.
+
     // debug
-    printf("%d\n", top_node.token->type);
-    test_print_tree(&top_node);
+    //printf("%d\n", p_top->type);
+    //test_print_tree(p_top);
 }
+

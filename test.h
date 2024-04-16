@@ -1,9 +1,8 @@
 #ifndef TEST_H
 #define TEST_H
 
-#include "parse.h"
-#include "tree.h"
+#include "token.h"
 
-void test_print_tree(struct Node* p_top_node);
+void test_print_tree(struct Token* p_top);
 
 #endif

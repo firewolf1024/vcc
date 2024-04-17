@@ -36,8 +36,10 @@ int main(int argc, char* argv[]) {
         // input parsing
         struct Token tokens[len];
 
-        if (parse_tokenize(input, tokens))
+        if (parse_tokenize(input, tokens)) {
+            printf("Error\n");
             continue;
+        }
 
         free(input);
 

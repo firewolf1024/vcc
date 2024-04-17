@@ -3,6 +3,7 @@
 
 enum Token_Types {
     NUM,
+    SGN,
     VAR,
     SET,
     OPS,

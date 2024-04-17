@@ -27,6 +27,8 @@ double eval(struct Token* p_top) {
                 return 0;
                 break;
         }
+    } else if (p_top->type == SGN) {
+        return eval(p_top->left) * -1;
     } else {
         return p_top->value;
     }

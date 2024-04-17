@@ -58,7 +58,7 @@ int parse_tokenize(char* input, struct Token* tokens) {
                 tokens[j].type = OPS;
                 tokens[j].op_type = POW;
                 break;
-            
+           
             case 'A' ... 'Z':
             case 'a' ... 'z':
                 tokens[j].type = VAR;
@@ -129,6 +129,10 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
                         (op_stack[k]->op_type < tokens[i].op_type ||
                         (op_stack[k]->op_type == tokens[i].op_type &&
                         op_stack[k]->op_type % 2))) { // Op types 1 and 3 are left-associative
+                    if (j < 1) {
+                        fprintf(stderr, "Error: Missing operand\n");
+                        return 1;
+                    }
                     op_stack[k]->left = out_stack[j-1];
                     op_stack[k]->right = out_stack[j];
                     j--;
@@ -150,6 +154,12 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
             fprintf(stderr, "Error: Mismatched parentheses\n");
             return 1;
         }
+        
+        if (j < 1) {
+            fprintf(stderr, "Error: Missing operand\n");
+            return 1;
+        }
+
         op_stack[k]->left = out_stack[j-1];
         op_stack[k]->right = out_stack[j];
         j--;

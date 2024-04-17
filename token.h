@@ -32,4 +32,12 @@ struct Token {
     struct Token* right;
 };
 
+struct Expression {
+    struct Token* tokens;
+    struct Token* p_top;
+    int len;
+};
+
+void free_expr(struct Expression expr);
+
 #endif

@@ -6,7 +6,8 @@
 
 #include "token.h"
 
-int parse_tokenize(char* input, struct Token* tokens) {
+int parse_tokenize(char* input, struct Expression* expr) {
+    struct Token* tokens = expr->tokens;
     int i = 0, j = 0; // i: input index, j: token list index
     int end = 0;
 
@@ -83,7 +84,6 @@ int parse_tokenize(char* input, struct Token* tokens) {
             case 'a' ... 'z':
                 tokens[j].type = VAR;
                 tokens[j].value = input[i];
-                // TODO: make variables work
                 break;
            
             case '\n':
@@ -102,10 +102,11 @@ int parse_tokenize(char* input, struct Token* tokens) {
     return 0;
 }
 
-int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
+int parse_shunting_yard(struct Expression* expr) {
     // not actual stacks but you get what I mean
-    struct Token* op_stack[len];
-    struct Token* out_stack[len];
+    struct Token* op_stack[expr->len];
+    struct Token* out_stack[expr->len];
+    struct Token* tokens = expr->tokens;
     // j: top of the output stack, k: top of the operator stack
     // -1 indicates an empty stack
     int j = -1, k = -1;
@@ -217,7 +218,7 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
     }
 
     //memcpy(p_top, out_stack[0], sizeof(struct Token));
-    *pp_top = out_stack[0];
+    expr->p_top = out_stack[0];
 
     return 0;
 }

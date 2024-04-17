@@ -9,8 +9,8 @@
 
 int main(int argc, char* argv[]) {
     char vars[26];
-    struct Token* func_cache = NULL;
-    int cache_top = 0;
+    struct Expression* expr_cache = NULL;
+    int n_expr = 0;
     char quit_symbol = 'q';
 
     printf("vcc (very cool calculator)\ntype %c to quit\n", quit_symbol);
@@ -36,29 +36,39 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // updating the function cache (tokens will be directly written into here)
-        struct Token* tmp_func_cache = realloc(func_cache,
-                (cache_top + len) * sizeof(struct Token));
-        if (tmp_func_cache == NULL) {
+        struct Expression expr;
+        expr.tokens = malloc(sizeof(struct Token) * len);
+        expr.p_top = &expr.tokens[0];
+        expr.len = len;
+
+        struct Expression* new_expr_cache = realloc(expr_cache, (n_expr + 1) * sizeof(struct Expression));
+        if (!new_expr_cache) {
             fprintf(stderr, "Error: failed to reallocate memory");
+            continue;
         } else {
-            func_cache = tmp_func_cache;
-            free(tmp_func_cache);
+            expr_cache = new_expr_cache;
+            expr_cache[n_expr] = expr;
         }
 
         // input parsing
-        if (parse_tokenize(input, &func_cache[cache_top]))
+        if (parse_tokenize(input, &expr))
             continue;
 
-        free(input);
+        //struct Token* p_top; // will point to the top of the tree once it's assembled
 
-        struct Token* p_top; // will point to the top of the tree once it's assembled
-
-        if (parse_shunting_yard(&func_cache[cache_top], len, &p_top))
+        if (parse_shunting_yard(&expr))
             continue;
 
         // the math happens here
-        printf("%f\n", eval(p_top, vars));
-        cache_top += len;
+        printf("%f\n", eval(expr.p_top, vars));
+        n_expr++;
+        
+        free(input);
     }
+    
+    for (int i = 0; i < n_expr; i++) {
+        free_expr(expr_cache[i]);
+    }
+    free(expr_cache);
+    free(vars);
 }

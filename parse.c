@@ -95,6 +95,8 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
             case VAR:
                 j++;
                 out_stack[j] = &tokens[i];
+                out_stack[j]->left = NULL;
+                out_stack[j]->right = NULL;
                 break;
             
             case SET:
@@ -112,8 +114,8 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
                         fprintf(stderr, "Error: Mismatched parentheses\n");
                         return 1;
                     }
-                    op_stack[k]->left = out_stack[-2];
-                    op_stack[k]->right = out_stack[-1];
+                    op_stack[k]->left = out_stack[j-1];
+                    op_stack[k]->right = out_stack[j];
                     j--;
                     out_stack[j] = op_stack[k];
                     k--;
@@ -124,9 +126,11 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
             case OPS:
                 while (k > -1 && 
                         op_stack[k]->type == OPS && 
-                        op_stack[k]->op_type < tokens[i].op_type) {
-                    op_stack[k]->left = out_stack[-2];
-                    op_stack[k]->right = out_stack[-1];
+                        (op_stack[k]->op_type < tokens[i].op_type ||
+                        (op_stack[k]->op_type == tokens[i].op_type &&
+                        op_stack[k]->op_type % 2))) { // Op types 1 and 3 are left-associative
+                    op_stack[k]->left = out_stack[j-1];
+                    op_stack[k]->right = out_stack[j];
                     j--;
                     out_stack[j] = op_stack[k];
                     k--;
@@ -139,13 +143,6 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
                 // this shouldn't happen, but I'll include it to stop GCC from complaining
                 break;
         }
-
-        // debug
-        printf("Step: %d\nCurrent: %d\nOp Stack: ", i, tokens[i].type);
-        for (int l = 0; l <= k; l++) printf("%d, ", op_stack[l]->type);
-        printf("\nOut Stack: ");
-        for (int l = 0; l <= j; l++) printf("%d, ", out_stack[l]->type);
-        printf("\n\n");
     }
 
     for (; k > -1; k--) {
@@ -153,18 +150,10 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
             fprintf(stderr, "Error: Mismatched parentheses\n");
             return 1;
         }
-        op_stack[k]->left = out_stack[-2];
-        op_stack[k]->right = out_stack[-1];
+        op_stack[k]->left = out_stack[j-1];
+        op_stack[k]->right = out_stack[j];
         j--;
         out_stack[j] = op_stack[k];
-        k--;
-    
-        // debug
-        printf("Step: Finish\nOp Stack: ");
-        for (int l = 0; l <= k; l++) printf("%d, ", op_stack[l]->type);
-        printf("\nOut Stack: ");
-        for (int l = 0; l <= j; l++) printf("%d, ", out_stack[l]->type);
-        printf("\n\n");
     }
 
     // check if the entire output stack has made it into the tree

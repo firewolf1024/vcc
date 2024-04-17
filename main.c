@@ -36,8 +36,6 @@ int main(int argc, char* argv[]) {
 
     // tokens is still the same pile of wood, only that the wood has now been labelled to indicate how it would fit together as a tree.
 
-    // debug
-    //printf("%d\n", p_top->type);
-    //test_print_tree(p_top);
+    test_print_tree(p_top);
 }
 

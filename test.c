@@ -15,8 +15,10 @@ void test_print_tree(struct Token* p_top) {
     if (p_top->right)
         test_print_tree(p_top->right);
     
-    printf("type: %s, op: %s, val: %f\n", 
-            TOKEN_NAMES[p_top->type], 
-            OP_NAMES[p_top->op_type], 
-            p_top->value);
+    printf("type: %s ", TOKEN_NAMES[p_top->type]);
+    if (p_top->type == NUM)
+        printf("val: %lf", p_top->value);
+    else if (p_top->type == OPS)
+        printf("op_type: %s", OP_NAMES[p_top->op_type]);
+    printf("\n");
 }

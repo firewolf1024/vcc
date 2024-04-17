@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "token.h"
+#include "eval.h"
 #include "parse.h"
 #include "test.h"
+#include "token.h"
 
 const char QUIT_SYMBOL = 'q';
 
@@ -47,6 +48,6 @@ int main(int argc, char* argv[]) {
 
         // tokens is still the same pile of wood, only that the wood has now been labelled to indicate how it would fit together as a tree.
 
-        test_print_tree(p_top);
+        printf("%f\n", eval(p_top));
     }
 }

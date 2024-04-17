@@ -57,7 +57,7 @@ int parse_tokenize(char* input, struct Token* tokens) {
                 break;
             
             case '-':
-                if (j == 0 || tokens[j-1].type == LPR) {
+                if (j == 0 || tokens[j-1].type == LPR || tokens[j-1].type == SET) {
                     tokens[j].type = SGN;
                 } else {
                     tokens[j].type = OPS;
@@ -80,7 +80,6 @@ int parse_tokenize(char* input, struct Token* tokens) {
                 tokens[j].op_type = POW;
                 break;
            
-            case 'A' ... 'Z':
             case 'a' ... 'z':
                 tokens[j].type = VAR;
                 tokens[j].value = input[i];
@@ -127,7 +126,8 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
                 break;
 
             case SET:
-                // TODO
+                k++;
+                op_stack[k] = &tokens[i];
                 break;
 
             case LPR:
@@ -140,12 +140,17 @@ int parse_shunting_yard(struct Token* tokens, int len, struct Token** pp_top) {
                     if (k == -1) {
                         fprintf(stderr, "Error: Mismatched parentheses\n");
                         return 1;
+                    } else if (op_stack[k]->type == SGN) {
+                        op_stack[k]->left = out_stack[j];
+                        out_stack[j] = op_stack[k];
+                        k--;
+                    } else {
+                        op_stack[k]->left = out_stack[j-1];
+                        op_stack[k]->right = out_stack[j];
+                        j--;
+                        out_stack[j] = op_stack[k];
+                        k--;
                     }
-                    op_stack[k]->left = out_stack[j-1];
-                    op_stack[k]->right = out_stack[j];
-                    j--;
-                    out_stack[j] = op_stack[k];
-                    k--;
                 }
                 k--; // discard opening parentheses
                 break;

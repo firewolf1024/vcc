@@ -3,6 +3,6 @@
 
 #include "token.h"
 
-double eval(struct Token* p_top);
+double eval(struct Token* p_top, char* vars);
 
 #endif

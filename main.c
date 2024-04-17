@@ -7,11 +7,12 @@
 #include "test.h"
 #include "token.h"
 
-const char QUIT_SYMBOL = 'q';
-
 int main(int argc, char* argv[]) {
-    printf("vcc (very cool calculator)\ntype %c to quit\n", QUIT_SYMBOL);
+    char vars[26];
+    char quit_symbol = 'q';
 
+    printf("vcc (very cool calculator)\ntype %c to quit\n", quit_symbol);
+    
     while (1) {
         // getting the input
         char* input = NULL;
@@ -24,7 +25,7 @@ int main(int argc, char* argv[]) {
 
         int len = strlen(input);
         
-        if (input[0] == QUIT_SYMBOL) {
+        if (input[0] == quit_symbol) {
             if (len > 2) {
                 fprintf(stderr, "Error: quit symbol cannot be used in a formula\n");
                 continue;
@@ -36,10 +37,8 @@ int main(int argc, char* argv[]) {
         // input parsing
         struct Token tokens[len];
 
-        if (parse_tokenize(input, tokens)) {
-            printf("Error\n");
+        if (parse_tokenize(input, tokens))
             continue;
-        }
 
         free(input);
 
@@ -48,8 +47,6 @@ int main(int argc, char* argv[]) {
         if (parse_shunting_yard(tokens, len, &p_top))
             continue;
 
-        // tokens is still the same pile of wood, only that the wood has now been labelled to indicate how it would fit together as a tree.
-
-        printf("%f\n", eval(p_top));
+        printf("%f\n", eval(p_top, vars));
     }
 }

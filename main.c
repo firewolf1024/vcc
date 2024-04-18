@@ -9,7 +9,8 @@
 
 int main(int argc, char* argv[]) {
     char vars[26];
-    struct Expression* expr_cache = NULL;
+    struct Expression* expr_cache = malloc(sizeof(struct Expression) * 2);
+    int cache_size = 2;
     int n_expr = 0;
     char quit_symbol = 'q';
 
@@ -19,6 +20,8 @@ int main(int argc, char* argv[]) {
         // getting the input
         char* input = NULL;
         size_t size;
+
+        printf("[%d] ", n_expr);
 
         if (getline(&input, &size, stdin) == -1) {
             fprintf(stderr, "Error getting input\n");
@@ -41,20 +44,22 @@ int main(int argc, char* argv[]) {
         expr.p_top = &expr.tokens[0];
         expr.len = len;
 
-        struct Expression* new_expr_cache = realloc(expr_cache, (n_expr + 1) * sizeof(struct Expression));
-        if (!new_expr_cache) {
-            fprintf(stderr, "Error: failed to reallocate memory");
-            continue;
-        } else {
-            expr_cache = new_expr_cache;
-            expr_cache[n_expr] = expr;
+        if (n_expr >= cache_size) {
+            struct Expression* new_expr_cache = realloc(expr_cache, 
+                (n_expr * 3 / 2) * sizeof(struct Expression));
+            if (!new_expr_cache) {
+                fprintf(stderr, "Error: failed to reallocate memory");
+                continue;
+            } else {
+                expr_cache = new_expr_cache;
+                expr_cache[n_expr] = expr;
+                cache_size *= 1.5;
+            }
         }
 
         // input parsing
         if (parse_tokenize(input, &expr))
             continue;
-
-        //struct Token* p_top; // will point to the top of the tree once it's assembled
 
         if (parse_shunting_yard(&expr))
             continue;

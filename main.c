@@ -12,9 +12,8 @@ int main(int argc, char* argv[]) {
     struct Expression* expr_cache = malloc(sizeof(struct Expression) * 2);
     int cache_size = 2;
     int n_expr = 0;
-    char quit_symbol = 'q';
 
-    printf("vcc (very cool calculator)\ntype %c to quit\n", quit_symbol);
+    printf("vcc (very cool calculator)\n");
     
     while (1) {
         // getting the input
@@ -30,15 +29,6 @@ int main(int argc, char* argv[]) {
 
         int len = strlen(input);
         
-        if (input[0] == quit_symbol) {
-            if (len > 2) {
-                fprintf(stderr, "Error: quit symbol cannot be used in a formula\n");
-                continue;
-            } else {
-                return 0;
-            }
-        }
-
         struct Expression expr;
         expr.tokens = malloc(sizeof(struct Token) * len);
         expr.p_top = &expr.tokens[0];
@@ -58,21 +48,30 @@ int main(int argc, char* argv[]) {
         }
 
         // input parsing
-        if (parse_tokenize(input, &expr))
-            continue;
+        switch (parse_tokenize(input, &expr)) {
+            case 1:
+                continue;
+            case 2:
+                return 0;
+            default:
+                break;
+        }
 
         if (parse_shunting_yard(&expr))
             continue;
 
+        // test_print_tree(expr.p_top);
+        
         // the math happens here
         printf("%f\n", eval(expr.p_top, vars));
         n_expr++;
         
         free(input);
     }
-    
+
     for (int i = 0; i < n_expr; i++) {
-        free_expr(expr_cache[i]);
+        free(&expr_cache[i].tokens);
+        free(&expr_cache[i]);
     }
     free(expr_cache);
     free(vars);

@@ -82,8 +82,47 @@ int parse_tokenize(char* input, struct Expression* expr) {
                 break;
            
             case 'a' ... 'z':
-                tokens[j].type = VAR;
-                tokens[j].value = input[i];
+                if (input[i+1] >= 'a' && input[i+1] <= 'z') {
+                    char name[expr->len - i];
+                    for (int l = i; input[i] >= 'a' && input[i] <= 'z'; i++) {
+                        name[i - l] = input[i];
+                    }
+
+                    if (!strcmp(name, "quit")) {
+                        if (j > 0) {
+                            fprintf(stderr, "Error: cannot use quit token in expression\n");
+                            return 1;
+                        } else {
+                            return 2;
+                        }
+                    }
+
+                    if (input[i] != '(') {
+                        fprintf(stderr, "Error: missing function body\n");
+                        return 1;
+                    }
+                    
+                    tokens[j].type = FUN;
+                    if (!strcmp(name, "sqrt"))
+                        tokens[j].fn_type = SQRT;
+                    else if (!strcmp(name, "exp"))
+                        tokens[j].fn_type = EXP;
+                    else if (!strcmp(name, "ln"))
+                        tokens[j].fn_type = LN;
+                    else if (!strcmp(name, "sin"))
+                        tokens[j].fn_type = SIN;
+                    else if (!strcmp(name, "cos"))
+                        tokens[j].fn_type = COS;
+                    else {
+                        fprintf(stderr, "Error: unknown function %s\n", name);
+                        return 1;
+                    }
+                    i--;
+                
+                } else {
+                    tokens[j].type = VAR;
+                    tokens[j].name = input[i];
+                }
                 break;
            
             case '\n':
@@ -122,15 +161,8 @@ int parse_shunting_yard(struct Expression* expr) {
                 break;
            
             case SGN:
-                k++;
-                op_stack[k] = &tokens[i];
-                break;
-
             case SET:
-                k++;
-                op_stack[k] = &tokens[i];
-                break;
-
+            case FUN:
             case LPR:
                 k++;
                 op_stack[k] = &tokens[i];
@@ -141,21 +173,28 @@ int parse_shunting_yard(struct Expression* expr) {
                     if (k == -1) {
                         fprintf(stderr, "Error: Mismatched parentheses\n");
                         return 1;
-                    } else if (op_stack[k]->type == SGN) {
-                        op_stack[k]->left = out_stack[j];
-                        out_stack[j] = op_stack[k];
-                        k--;
-                    } else {
+                    } else if (op_stack[k]->type == OPS || op_stack[k]->type == SET) {
                         op_stack[k]->left = out_stack[j-1];
                         op_stack[k]->right = out_stack[j];
                         j--;
                         out_stack[j] = op_stack[k];
                         k--;
+                    } else {
+                        op_stack[k]->left = out_stack[j];
+                        out_stack[j] = op_stack[k];
+                        k--;
                     }
                 }
                 k--; // discard opening parentheses
-                break;
 
+                if (op_stack[k]->type == FUN) {
+                    op_stack[k]->left = out_stack[j];
+                    out_stack[j] = op_stack[k];
+                    k--;
+                }
+
+                break;
+                
             case OPS:
                 // there should only be one sign (unless the tokenizer fucked up somehow)
                 if (k > -1 && op_stack[k]->type == SGN) {
@@ -194,11 +233,7 @@ int parse_shunting_yard(struct Expression* expr) {
             fprintf(stderr, "Error: Mismatched parentheses\n");
             return 1;
         
-        } else if (op_stack[k]->type == SGN) {
-            op_stack[k]->left = out_stack[j];
-            out_stack[j] = op_stack[k];
-        
-        } else {
+        } else if (op_stack[k]->type == OPS || op_stack[k]->type == SET) {
             if (j < 1) {
                 fprintf(stderr, "Error: Missing operand\n");
                 return 1;
@@ -207,6 +242,10 @@ int parse_shunting_yard(struct Expression* expr) {
             op_stack[k]->left = out_stack[j-1];
             op_stack[k]->right = out_stack[j];
             j--;
+            out_stack[j] = op_stack[k];
+
+        } else {
+            op_stack[k]->left = out_stack[j];
             out_stack[j] = op_stack[k];
         }
     }

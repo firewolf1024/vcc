@@ -18,11 +18,7 @@ double eval(struct Token* p_top, char* vars) {
         
         case SET:
             double val = eval(p_top->right, vars);
-            vars[(int) p_top->left->value - 'a'] = val;
-            printf("value %lf assigned to variable %c (index %d)\n",
-                    val,
-                    (int) p_top->left->value,
-                    (int) p_top->left->value - 'a');
+            vars[p_top->left->name - 'a'] = val;
             return val;
         
         case OPS:
@@ -52,6 +48,20 @@ double eval(struct Token* p_top, char* vars) {
                     return 0;
             }
         
+        case FUN:
+            switch (p_top->fn_type) {
+                case SQRT:
+                    return sqrt(eval(p_top->left, vars));
+                case EXP:
+                    return exp(eval(p_top->left, vars));
+                case LN:
+                    return log(eval(p_top->left, vars));
+                case SIN:
+                    return sin(eval(p_top->left, vars));
+                case COS:
+                    return cos(eval(p_top->left, vars));
+            }
+
         default:
             return 0;
     }

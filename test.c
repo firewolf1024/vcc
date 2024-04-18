@@ -4,8 +4,9 @@
 
 #include "token.h"
 
-const char* TOKEN_NAMES[] = {"NUM", "VAR", "SET", "OPS", "LPR", "RPR", "END"};
+const char* TOKEN_NAMES[] = {"NUM", "SGN", "VAR", "SET", "FUN", "OPS", "LPR", "RPR", "END"};
 const char* OP_NAMES[] = {"POW", "DIV", "MUL", "SUB", "ADD"};
+const char* FN_NAMES[] = {"SQRT", "EXP", "LN", "SIN", "COS"};
 
 // traverses the tree in post-order to print its contents in RPN
 void test_print_tree(struct Token* p_top) {
@@ -16,9 +17,22 @@ void test_print_tree(struct Token* p_top) {
         test_print_tree(p_top->right);
     
     printf("type: %s ", TOKEN_NAMES[p_top->type]);
-    if (p_top->type == NUM)
-        printf("val: %lf", p_top->value);
-    else if (p_top->type == OPS)
-        printf("op_type: %s", OP_NAMES[p_top->op_type]);
+    switch (p_top->type) {
+        case NUM:
+            printf("val: %lf", p_top->value);
+            break;
+        case VAR:
+            printf("name: %c", p_top->name);
+            break;
+        case FUN:
+            printf("fn_type: %s", FN_NAMES[p_top->fn_type]);
+            break;
+        case OPS:
+            printf("op_type: %s", OP_NAMES[p_top->op_type]);
+            break;
+        default:
+            printf("Why is this even in the tree?");
+            break;
+    }
     printf("\n");
 }

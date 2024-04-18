@@ -6,6 +6,7 @@ enum Token_Types {
     SGN,
     VAR,
     SET,
+    FUN,
     OPS,
     LPR,
     RPR,
@@ -21,12 +22,22 @@ enum Op_Types {
     ADD
 };
 
+enum Fn_Types {
+    SQRT,
+    EXP,
+    LN,
+    SIN,
+    COS
+};
+
 // capable of forming a binary tree
 struct Token {
     enum Token_Types type;
     union {
-        long op_type; // so they occupy the same amount of space
+        enum Op_Types op_type;
+        enum Fn_Types fn_type;
         double value;
+        char name;
     };
     struct Token* left;
     struct Token* right;
@@ -37,7 +48,5 @@ struct Expression {
     struct Token* p_top;
     int len;
 };
-
-void free_expr(struct Expression expr);
 
 #endif

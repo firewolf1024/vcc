@@ -116,7 +116,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                     else if (!strcmp(name, "cos"))
                         tokens[j].fn_type = COS;
                     else {
-                        fprintf(stderr, "Error: Unknown function %s\n", name);
+                        fprintf(stderr, "Error: Unknown function \'%s\'\n", name);
                         return 1;
                     }
                     i--;
@@ -152,7 +152,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                 break;
 
             default:
-                fprintf(stderr, "Error: Unknown token %c\n", input[i]);
+                fprintf(stderr, "Error: Unknown token \'%c\'\n", input[i]);
                 return 1;
         }
         

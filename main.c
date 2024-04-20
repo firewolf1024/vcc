@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         if (parse_shunting_yard(&expr, &expr_cache, n_expr))
             continue;
 
-        test_print_tree(expr.p_top); // debug
+        //test_print_tree(expr.p_top); // debug
 
         if (n_expr >= cache_size) {
             struct Expression* new_expr_cache = realloc(expr_cache, 

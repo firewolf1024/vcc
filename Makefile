@@ -4,7 +4,7 @@ FLAGS = -Wall -g -lm
 
 calc: $(CFILES) $(HFILES)
 	clear
-	gcc -o calc $(CFILES) $(FLAGS)
+	gcc -o vcc $(CFILES) $(FLAGS)
 
 test: $(CFILES) $(HFILES) test.c test.h
 	clear

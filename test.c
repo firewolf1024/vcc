@@ -6,7 +6,7 @@
 
 const char* TOKEN_NAMES[] = {"NUM", "SGN", "VAR", "SET", "FUN", "OPS", "LPR", "RPR", "OLD", "END"};
 const char* OP_NAMES[] = {"POW", "DIV", "MUL", "SUB", "ADD"};
-const char* FN_NAMES[] = {"SQRT", "EXP", "LN", "SIN", "COS"};
+const char* FN_NAMES[] = {"SQRT", "EXP", "LN", "LOG", "SIN", "COS", "TAN", "ASIN", "ACOS", "ATAN"};
 
 // traverses the tree in post-order to print its contents in RPN
 void test_print_tree(struct Token* p_top) {

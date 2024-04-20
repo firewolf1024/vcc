@@ -27,8 +27,13 @@ enum Fn_Types {
     SQRT,
     EXP,
     LN,
+    LOG,
     SIN,
-    COS
+    COS,
+    TAN,
+    ASIN,
+    ACOS,
+    ATAN
 };
 
 // capable of forming a binary tree

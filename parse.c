@@ -111,10 +111,20 @@ int parse_tokenize(char* input, struct Expression* expr) {
                         tokens[j].fn_type = EXP;
                     else if (!strcmp(name, "ln"))
                         tokens[j].fn_type = LN;
+                    else if (!strcmp(name, "log"))
+                        tokens[j].fn_type = LOG;
                     else if (!strcmp(name, "sin"))
                         tokens[j].fn_type = SIN;
                     else if (!strcmp(name, "cos"))
                         tokens[j].fn_type = COS;
+                    else if (!strcmp(name, "tan"))
+                        tokens[j].fn_type = TAN;
+                    else if (!strcmp(name, "asin"))
+                        tokens[j].fn_type = ASIN;
+                    else if (!strcmp(name, "acos"))
+                        tokens[j].fn_type = ACOS;
+                    else if (!strcmp(name, "atan"))
+                        tokens[j].fn_type = ATAN;
                     else {
                         fprintf(stderr, "Error: Unknown function \'%s\'\n", name);
                         return 1;

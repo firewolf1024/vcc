@@ -52,14 +52,33 @@ double eval(struct Token* p_top, char* vars) {
             switch (p_top->fn_type) {
                 case SQRT:
                     return sqrt(eval(p_top->left, vars));
+                
                 case EXP:
                     return exp(eval(p_top->left, vars));
+                
                 case LN:
                     return log(eval(p_top->left, vars));
+                
+                case LOG:
+                    return log10(eval(p_top->left, vars));
+                
                 case SIN:
                     return sin(eval(p_top->left, vars));
+                
                 case COS:
                     return cos(eval(p_top->left, vars));
+
+                case TAN:
+                    return tan(eval(p_top->left, vars));
+
+                case ASIN:
+                    return asin(eval(p_top->left, vars));
+                
+                case ACOS:
+                    return acos(eval(p_top->left, vars));
+
+                case ATAN:
+                    return atan(eval(p_top->left, vars));
             }
         
         case OLD:

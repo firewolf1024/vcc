@@ -4,7 +4,18 @@ A simple terminal-based calculator written in C. It mostly does standard calcula
 
 ## Features
 - Basic operations  
-- Currently implemented functions: `sqrt`, `sin`, `cos`, `exp`, `ln`  
+- Integer and non-integer exponentials  
+- Currently implemented functions:
+    - `sqrt`  
+    - `exp`  
+    - `ln` (natural logarithm)  
+    - `log` (base 10 logarithm)
+    - `sin`
+    - `cos`
+    - `tan`
+    - `asin`
+    - `acos`
+    - `atan`
 - Option to set and use variables (a...z)  
 - Expression caching and option to refer back to previous expression  
     - type `[n]` to include the `n`th expression in the current one  

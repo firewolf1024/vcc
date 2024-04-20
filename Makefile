@@ -11,4 +11,4 @@ test: $(CFILES) $(HFILES) test.c test.h
 	gcc -o calc $(CFILES) test.c $(FLAGS)
 
 clean:
-	rm calc
+	rm vcc

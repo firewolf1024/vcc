@@ -34,19 +34,6 @@ int main(int argc, char* argv[]) {
         expr.p_top = &expr.tokens[0];
         expr.len = len;
 
-        if (n_expr >= cache_size) {
-            struct Expression* new_expr_cache = realloc(expr_cache, 
-                (n_expr * 3 / 2) * sizeof(struct Expression));
-            if (!new_expr_cache) {
-                fprintf(stderr, "Error: failed to reallocate memory");
-                continue;
-            } else {
-                expr_cache = new_expr_cache;
-                expr_cache[n_expr] = expr;
-                cache_size *= 1.5;
-            }
-        }
-
         // input parsing
         switch (parse_tokenize(input, &expr)) {
             case 1:
@@ -57,16 +44,29 @@ int main(int argc, char* argv[]) {
                 break;
         }
 
-        if (parse_shunting_yard(&expr))
+        if (parse_shunting_yard(&expr, &expr_cache, n_expr))
             continue;
 
-        // test_print_tree(expr.p_top);
-        
+        //test_print_tree(expr.p_top); // debug
+
+        if (n_expr >= cache_size) {
+            struct Expression* new_expr_cache = realloc(expr_cache, 
+                (n_expr * 3 / 2) * sizeof(struct Expression));
+            if (!new_expr_cache) {
+                fprintf(stderr, "Error: failed to reallocate memory");
+                continue;
+            } else {
+                expr_cache = new_expr_cache;
+                cache_size *= 1.5;
+            }
+        }
+        expr_cache[n_expr] = expr;
+       
         // the math happens here
         printf("%f\n", eval(expr.p_top, vars));
-        n_expr++;
         
         free(input);
+        n_expr++;
     }
 
     for (int i = 0; i < n_expr; i++) {

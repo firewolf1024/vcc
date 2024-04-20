@@ -5,6 +5,6 @@
 
 int parse_tokenize(char* input, struct Expression* expr);
 
-int parse_shunting_yard(struct Expression* expr);
+int parse_shunting_yard(struct Expression* expr, struct Expression** cache, int n_expr);
 
 #endif

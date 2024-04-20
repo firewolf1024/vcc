@@ -83,10 +83,12 @@ int parse_tokenize(char* input, struct Expression* expr) {
            
             case 'a' ... 'z':
                 if (input[i+1] >= 'a' && input[i+1] <= 'z') {
-                    char name[expr->len - i];
-                    for (int l = i; input[i] >= 'a' && input[i] <= 'z'; i++) {
+                    char name[5];
+                    int l = i;
+                    for (; input[i] >= 'a' && input[i] <= 'z'; i++) {
                         name[i - l] = input[i];
                     }
+                    name[i - l] = '\0';
 
                     if (!strcmp(name, "quit")) {
                         if (j > 0) {
@@ -124,7 +126,26 @@ int parse_tokenize(char* input, struct Expression* expr) {
                     tokens[j].name = input[i];
                 }
                 break;
-           
+          
+            case '[':
+                int index = 0;
+                i++;
+                
+                while (input[i] >= '0' && input[i] <= '9') {
+                    index *= 10;
+                    index += input[i] - '0';
+                    i++;
+                }
+
+                if (input[i] != ']') {
+                    fprintf(stderr, "Error: invalid expression index\n");
+                    return 1;
+                }
+
+                tokens[j].type = OLD;
+                tokens[j].value = index;
+                break;
+
             case '\n':
                 tokens[j].type = END;
                 end = 1;
@@ -141,7 +162,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
     return 0;
 }
 
-int parse_shunting_yard(struct Expression* expr) {
+int parse_shunting_yard(struct Expression* expr, struct Expression** cache, int n_expr) {
     // not actual stacks but you get what I mean
     struct Token* op_stack[expr->len];
     struct Token* out_stack[expr->len];
@@ -160,6 +181,17 @@ int parse_shunting_yard(struct Expression* expr) {
                 out_stack[j]->right = NULL;
                 break;
            
+            case OLD:
+                if (tokens[i].value > n_expr - 1) {
+                    fprintf(stderr, "Error: reference to non-existent function\n");
+                    return 1;
+                }
+
+                j++;
+                memcpy(&tokens[i], (*cache)[(int) tokens[i].value].p_top, sizeof(struct Token));
+                out_stack[j] = &tokens[i];
+                break;
+
             case SGN:
             case SET:
             case FUN:
@@ -171,7 +203,7 @@ int parse_shunting_yard(struct Expression* expr) {
             case RPR:
                 while (op_stack[k]->type != LPR) {
                     if (k == -1) {
-                        fprintf(stderr, "Error: Mismatched parentheses\n");
+                        fprintf(stderr, "Error: mismatched parentheses\n");
                         return 1;
                     } else if (op_stack[k]->type == OPS || op_stack[k]->type == SET) {
                         op_stack[k]->left = out_stack[j-1];
@@ -233,7 +265,9 @@ int parse_shunting_yard(struct Expression* expr) {
             fprintf(stderr, "Error: Mismatched parentheses\n");
             return 1;
         
-        } else if (op_stack[k]->type == OPS || op_stack[k]->type == SET) {
+        } else if (op_stack[k]->type == OPS || 
+                op_stack[k]->type == SET || 
+                op_stack[k]->type == SGN) {
             if (j < 1) {
                 fprintf(stderr, "Error: Missing operand\n");
                 return 1;

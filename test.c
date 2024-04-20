@@ -4,7 +4,7 @@
 
 #include "token.h"
 
-const char* TOKEN_NAMES[] = {"NUM", "SGN", "VAR", "SET", "FUN", "OPS", "LPR", "RPR", "END"};
+const char* TOKEN_NAMES[] = {"NUM", "SGN", "VAR", "SET", "FUN", "OPS", "LPR", "RPR", "OLD", "END"};
 const char* OP_NAMES[] = {"POW", "DIV", "MUL", "SUB", "ADD"};
 const char* FN_NAMES[] = {"SQRT", "EXP", "LN", "SIN", "COS"};
 
@@ -29,6 +29,8 @@ void test_print_tree(struct Token* p_top) {
             break;
         case OPS:
             printf("op_type: %s", OP_NAMES[p_top->op_type]);
+            break;
+        case SET:
             break;
         default:
             printf("Why is this even in the tree?");

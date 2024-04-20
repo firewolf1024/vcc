@@ -14,7 +14,7 @@ double eval(struct Token* p_top, char* vars) {
             return eval(p_top->left, vars) * -1;
         
         case VAR:
-            return vars[(int) p_top->value - 'a'];
+            return vars[(int) p_top->name - 'a'];
         
         case SET:
             double val = eval(p_top->right, vars);
@@ -61,6 +61,9 @@ double eval(struct Token* p_top, char* vars) {
                 case COS:
                     return cos(eval(p_top->left, vars));
             }
+        
+        case OLD:
+            return eval(p_top->left, vars);
 
         default:
             return 0;

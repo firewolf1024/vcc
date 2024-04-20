@@ -92,7 +92,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
 
                     if (!strcmp(name, "quit")) {
                         if (j > 0) {
-                            fprintf(stderr, "Error: cannot use quit token in expression\n");
+                            fprintf(stderr, "Error: Cannot use quit token in expression\n");
                             return 1;
                         } else {
                             return 2;
@@ -100,7 +100,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                     }
 
                     if (input[i] != '(') {
-                        fprintf(stderr, "Error: missing function body\n");
+                        fprintf(stderr, "Error: Missing function body\n");
                         return 1;
                     }
                     
@@ -116,7 +116,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                     else if (!strcmp(name, "cos"))
                         tokens[j].fn_type = COS;
                     else {
-                        fprintf(stderr, "Error: unknown function %s\n", name);
+                        fprintf(stderr, "Error: Unknown function %s\n", name);
                         return 1;
                     }
                     i--;
@@ -138,7 +138,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                 }
 
                 if (input[i] != ']') {
-                    fprintf(stderr, "Error: invalid expression index\n");
+                    fprintf(stderr, "Error: Invalid expression index\n");
                     return 1;
                 }
 
@@ -152,7 +152,7 @@ int parse_tokenize(char* input, struct Expression* expr) {
                 break;
 
             default:
-                fprintf(stderr, "Error: unknown token %c\n", input[i]);
+                fprintf(stderr, "Error: Unknown token %c\n", input[i]);
                 return 1;
         }
         
@@ -183,7 +183,7 @@ int parse_shunting_yard(struct Expression* expr, struct Expression** cache, int 
            
             case OLD:
                 if (tokens[i].value > n_expr - 1) {
-                    fprintf(stderr, "Error: reference to non-existent function\n");
+                    fprintf(stderr, "Error: Reference to non-existent function\n");
                     return 1;
                 }
 
@@ -203,7 +203,7 @@ int parse_shunting_yard(struct Expression* expr, struct Expression** cache, int 
             case RPR:
                 while (op_stack[k]->type != LPR) {
                     if (k == -1) {
-                        fprintf(stderr, "Error: mismatched parentheses\n");
+                        fprintf(stderr, "Error: Mismatched parentheses\n");
                         return 1;
                     } else if (op_stack[k]->type == OPS || op_stack[k]->type == SET) {
                         op_stack[k]->left = out_stack[j-1];

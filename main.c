@@ -47,13 +47,13 @@ int main(int argc, char* argv[]) {
         if (parse_shunting_yard(&expr, &expr_cache, n_expr))
             continue;
 
-        //test_print_tree(expr.p_top); // debug
+        test_print_tree(expr.p_top); // debug
 
         if (n_expr >= cache_size) {
             struct Expression* new_expr_cache = realloc(expr_cache, 
                 (n_expr * 3 / 2) * sizeof(struct Expression));
             if (!new_expr_cache) {
-                fprintf(stderr, "Error: failed to reallocate memory");
+                fprintf(stderr, "Error: Failed to reallocate memory");
                 continue;
             } else {
                 expr_cache = new_expr_cache;

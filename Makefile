@@ -1,3 +1,14 @@
-calc: main.c token.h parse.c parse.h eval.c eval.h test.c test.h
+CFILES = main.c parse.c eval.c
+HFILES = token.h parse.h eval.h
+FLAGS = -Wall -g -lm
+
+calc: $(CFILES) $(HFILES)
 	clear
-	gcc -o calc main.c parse.c eval.c test.c -Wall -g -lm
+	gcc -o calc $(CFILES) $(FLAGS)
+
+test: $(CFILES) $(HFILES) test.c test.h
+	clear
+	gcc -o calc $(CFILES) test.c $(FLAGS)
+
+clean:
+	rm calc

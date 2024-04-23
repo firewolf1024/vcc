@@ -2,6 +2,22 @@
 
 A simple terminal-based calculator written in C. It mostly does standard calculator stuff.
 
+## Instructions
+
+### Installation
+
+For now, just run `make` wherever you downloaded the code and run the program with `./vcc`. To invoke vcc from the command line, you'll have to manually move the binary wherever you keep them. I'll add a configure script and a better makefile eventually.
+
+### Usage
+
+- Run the program using `./vcc` in the directory where you installed it, or `vcc` anywhere if you moved the binary to your binary directory.  
+- Recognized operators: `+`, `-`, `*`, `/`, `^`  
+- Floating point syntax: Use a period instead of a comma. `.x` is equivalent to `0.x`.  
+- Assign variables using `=` (e.g. `a=7`, `b=4.2`, `c=a/4`).
+- Function arguments have to be in parentheses.
+- Type `[n]` to include the `n`th expression in the current one. It is treated as if it were in parentheses.  
+- Type "quit" to quit the program.  
+
 ## Features
 - Basic operations  
 - Integer and non-integer exponentials  
@@ -17,13 +33,14 @@ A simple terminal-based calculator written in C. It mostly does standard calcula
     - `acos`
     - `atan`
 - Option to set and use variables (a...z)  
+    - Changing a variable also changes all variables that depend on it
 - Expression caching and option to refer back to previous expression  
-    - type `[n]` to include the `n`th expression in the current one  
-    - changed variables are interpreted as their new value  
-- Type "quit" to quit the program  
+    - Changed variables are interpreted as their new value  
 
 ### Currently missing features
 - Some i/o features:  
     - Editing previous expressions  
     - Using arrow keys to navigate input  
     - Reading from and writing to files  
+- A better Makefile and configure script
+- A `--help` option and man pages
